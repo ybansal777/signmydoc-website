@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignMyDoc — Modern Document Signing for Every Business</title>
+    <meta name="description" content="Send, sign, and manage documents digitally. Legally binding e-signatures that are simple, fast, and affordable for startups and SMBs.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS VARIABLES & RESET
+           ======================================== */
+        :root {
+            --ink: #0B1628;
+            --ink-light: #1A2A4A;
+            --ink-muted: #3D5278;
+            --ink-faded: #6B7FA3;
+            --parchment: #FAFBFD;
+            --parchment-warm: #F5F3EF;
+            --parchment-mid: #EDEEF2;
+            --gold: #C8965A;
+            --gold-light: #E8C590;
+            --gold-bright: #D4A04A;
+            --emerald: #1A8F6A;
+            --emerald-light: #22B885;
+            --emerald-dark: #14734F;
+            --white: #FFFFFF;
+            --shadow-sm: 0 1px 3px rgba(11, 22, 40, 0.04), 0 1px 2px rgba(11, 22, 40, 0.06);
+            --shadow-md: 0 4px 16px rgba(11, 22, 40, 0.06), 0 2px 6px rgba(11, 22, 40, 0.04);
+            --shadow-lg: 0 12px 40px rgba(11, 22, 40, 0.08), 0 4px 12px rgba(11, 22, 40, 0.04);
+            --shadow-xl: 0 24px 64px rgba(11, 22, 40, 0.1), 0 8px 20px rgba(11, 22, 40, 0.06);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --font-display: 'Instrument Serif', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--ink);
+            background: var(--parchment);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           UTILITY
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        /* ========================================
+           HEADER / NAV
+           ======================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 24px;
+            transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.4s ease;
+        }
+        .header.scrolled {
+            background: rgba(250, 251, 253, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 rgba(11, 22, 40, 0.06);
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            transition: height 0.4s ease;
+        }
+        .header.scrolled .header-inner {
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--ink);
+        }
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--ink);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 1px;
+            transform: rotate(-30deg);
+            bottom: 10px;
+            right: 4px;
+        }
+        .logo-mark svg {
+            width: 18px;
+            height: 18px;
+            color: var(--white);
+        }
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 22px;
+            letter-spacing: -0.02em;
+        }
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav { display: flex; align-items: center; gap: 32px; }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink-muted);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            transition: color 0.25s ease;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--gold);
+            transition: width 0.3s var(--ease-out-expo);
+        }
+        .nav-links a:hover { color: var(--ink); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 22px;
+            background: var(--ink);
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            border-radius: 50px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .nav-cta:hover {
+            background: var(--ink-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .mobile-toggle span {
+            width: 22px;
+            height: 2px;
+            background: var(--ink);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .mobile-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-toggle.active span:nth-child(2) { opacity: 0; }
+        .mobile-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--parchment);
+            z-index: 999;
+            padding: 100px 32px 32px;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            display: block;
+            padding: 16px 0;
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--ink);
+            text-decoration: none;
+            border-bottom: 1px solid var(--parchment-mid);
+        }
+
+        /* ========================================
+           HERO
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0 80px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(200, 150, 90, 0.07) 0%, transparent 70%);
+            animation: heroGlow 8s ease-in-out infinite alternate;
+        }
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(26, 143, 106, 0.05) 0%, transparent 70%);
+            animation: heroGlow 10s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes heroGlow {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(30px, -20px) scale(1.1); }
+        }
+
+        /* Floating document shapes */
+        .hero-shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .hero-shape {
+            position: absolute;
+            border-radius: var(--radius-md);
+            border: 1.5px solid rgba(11, 22, 40, 0.05);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .hero-shape-1 {
+            width: 120px; height: 160px;
+            top: 15%; right: 8%;
+            transform: rotate(12deg);
+            animation: floatDoc 12s ease-in-out infinite;
+        }
+        .hero-shape-2 {
+            width: 90px; height: 120px;
+            top: 60%; right: 15%;
+            transform: rotate(-8deg);
+            animation: floatDoc 15s ease-in-out infinite reverse;
+        }
+        .hero-shape-3 {
+            width: 100px; height: 130px;
+            top: 30%; right: 22%;
+            transform: rotate(5deg);
+            animation: floatDoc 18s ease-in-out infinite;
+            animation-delay: -3s;
+        }
+        .hero-shape::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 15%;
+            right: 25%;
+            height: 2px;
+            background: rgba(11, 22, 40, 0.06);
+            border-radius: 1px;
+            box-shadow:
+                0 10px 0 rgba(11, 22, 40, 0.05),
+                0 20px 0 rgba(11, 22, 40, 0.04),
+                0 30px 0 rgba(11, 22, 40, 0.03);
+        }
+        .hero-shape::after {
+            content: '';
+            position: absolute;
+            bottom: 18%;
+            left: 20%;
+            width: 40%;
+            height: 1.5px;
+            background: var(--gold);
+            opacity: 0.3;
+            border-radius: 1px;
+            transform: rotate(-5deg);
+        }
+        @keyframes floatDoc {
+            0%, 100% { transform: rotate(var(--r, 12deg)) translateY(0); }
+            50% { transform: rotate(var(--r, 12deg)) translateY(-20px); }
+        }
+        .hero-shape-1 { --r: 12deg; }
+        .hero-shape-2 { --r: -8deg; }
+        .hero-shape-3 { --r: 5deg; }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 680px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px 6px 8px;
+            background: var(--white);
+            border: 1px solid var(--parchment-mid);
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink-muted);
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-sm);
+        }
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.8); }
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(42px, 6vw, 72px);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: var(--ink);
+            margin-bottom: 24px;
+        }
+        .hero h1 .signature-word {
+            position: relative;
+            display: inline-block;
+            color: var(--gold-bright);
+        }
+        .hero h1 .signature-word::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: -4px;
+            right: -4px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: signLine 1.2s var(--ease-out-expo) 0.6s forwards;
+        }
+        @keyframes signLine {
+            to { transform: scaleX(1); }
+        }
+
+        .hero p {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--ink-faded);
+            max-width: 520px;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+        .btn-primary {
+            background: var(--emerald);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(26, 143, 106, 0.25);
+        }
+        .btn-primary:hover {
+            background: var(--emerald-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(26, 143, 106, 0.3);
+        }
+        .btn-secondary {
+            background: var(--white);
+            color: var(--ink);
+            border: 1.5px solid var(--parchment-mid);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-secondary:hover {
+            border-color: var(--ink-faded);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid var(--parchment-mid);
+        }
+        .hero-stat-value {
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+        }
+        .hero-stat-label {
+            font-size: 13px;
+            color: var(--ink-faded);
+            margin-top: 2px;
+        }
+
+        /* ========================================
+           SECTION COMMON
+           ======================================== */
+        .section {
+            padding: 100px 0;
+        }
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+        .section-label::before {
+            content: '';
+            width: 20px;
+            height: 1.5px;
+            background: var(--gold);
+            border-radius: 1px;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4vw, 48px);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--ink-faded);
+            max-width: 520px;
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           FEATURES
+           ======================================== */
+        .features {
+            background: var(--white);
+            border-top: 1px solid var(--parchment-mid);
+            border-bottom: 1px solid var(--parchment-mid);
+        }
+        .features-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .features-header .section-subtitle {
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .feature-card {
+            padding: 36px 32px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--parchment-mid);
+            background: var(--parchment);
+            transition: all 0.4s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+        .feature-card:hover {
+            border-color: rgba(200, 150, 90, 0.2);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .feature-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--gold-light);
+        }
+        .feature-card h3 {
+            font-family: var(--font-display);
+            font-size: 21px;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        .feature-card p {
+            font-size: 14.5px;
+            color: var(--ink-faded);
+            line-height: 1.65;
+        }
+
+        /* ========================================
+           HOW IT WORKS
+           ======================================== */
+        .how-it-works-header {
+            text-align: center;
+            margin-bottom: 72px;
+        }
+        .how-it-works-header .section-subtitle {
+            margin: 0 auto;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            position: relative;
+        }
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 48px;
+            left: calc(16.66% + 32px);
+            right: calc(16.66% + 32px);
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--parchment-mid) 0,
+                var(--parchment-mid) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+        .step-number {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--parchment-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        .step:hover .step-number {
+            border-color: var(--gold);
+            box-shadow: 0 8px 32px rgba(200, 150, 90, 0.15);
+            transform: scale(1.05);
+        }
+        .step-number-inner {
+            font-family: var(--font-display);
+            font-size: 36px;
+            color: var(--gold);
+        }
+        .step-icon {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 32px;
+            height: 32px;
+            background: var(--ink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .step-icon svg {
+            width: 14px;
+            height: 14px;
+            color: var(--gold-light);
+        }
+        .step h3 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        .step p {
+            font-size: 14.5px;
+            color: var(--ink-faded);
+            line-height: 1.65;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           SECURITY
+           ======================================== */
+        .security {
+            background: var(--ink);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .security::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(200, 150, 90, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(26, 143, 106, 0.04) 0%, transparent 50%);
+        }
+        .security .container {
+            position: relative;
+            z-index: 2;
+        }
+        .security .section-title {
+            color: var(--white);
+        }
+        .security .section-subtitle {
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .security-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .security-header .section-subtitle {
+            margin: 0 auto;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        .security-item {
+            text-align: center;
+            padding: 32px 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        .security-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(200, 150, 90, 0.2);
+            transform: translateY(-4px);
+        }
+        .security-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(200, 150, 90, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .security-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--gold-light);
+        }
+        .security-item h4 {
+            font-family: var(--font-display);
+            font-size: 17px;
+            margin-bottom: 8px;
+            color: var(--white);
+        }
+        .security-item p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.6;
+        }
+
+        .security-banner {
+            margin-top: 48px;
+            padding: 24px 32px;
+            background: rgba(26, 143, 106, 0.1);
+            border: 1px solid rgba(26, 143, 106, 0.2);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .security-banner svg {
+            width: 20px;
+            height: 20px;
+            color: var(--emerald-light);
+            flex-shrink: 0;
+        }
+        .security-banner strong {
+            color: var(--white);
+        }
+
+        /* ========================================
+           PRICING
+           ======================================== */
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .pricing-header .section-subtitle {
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+        .pricing-card {
+            border-radius: var(--radius-xl);
+            padding: 40px 36px;
+            background: var(--white);
+            border: 1.5px solid var(--parchment-mid);
+            position: relative;
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .pricing-card.featured {
+            border-color: var(--gold);
+            background: var(--white);
+            box-shadow: var(--shadow-xl);
+            transform: scale(1.03);
+        }
+        .pricing-card.featured:hover {
+            transform: scale(1.03) translateY(-4px);
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 5px 18px;
+            background: var(--gold);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 50px;
+        }
+
+        .pricing-name {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-faded);
+            margin-bottom: 8px;
+        }
+        .pricing-price {
+            font-family: var(--font-display);
+            font-size: 48px;
+            letter-spacing: -0.03em;
+            color: var(--ink);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .pricing-price span {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--ink-faded);
+            font-weight: 400;
+        }
+        .pricing-desc {
+            font-size: 14px;
+            color: var(--ink-faded);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--ink-muted);
+            line-height: 1.5;
+        }
+        .pricing-features li svg {
+            width: 18px;
+            height: 18px;
+            color: var(--emerald);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+        .pricing-btn-outline {
+            background: transparent;
+            color: var(--ink);
+            border: 1.5px solid var(--parchment-mid);
+        }
+        .pricing-btn-outline:hover {
+            border-color: var(--ink);
+        }
+        .pricing-btn-filled {
+            background: var(--ink);
+            color: var(--white);
+            border: 1.5px solid var(--ink);
+        }
+        .pricing-btn-filled:hover {
+            background: var(--ink-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========================================
+           ABOUT / TEAM
+           ======================================== */
+        .about {
+            background: var(--white);
+            border-top: 1px solid var(--parchment-mid);
+        }
+        .about-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .about-header .section-subtitle {
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .team-card {
+            text-align: center;
+            padding: 36px 24px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--parchment-mid);
+            background: var(--parchment);
+            transition: all 0.4s var(--ease-out-expo);
+        }
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(200, 150, 90, 0.2);
+        }
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--gold-light);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+        .team-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            opacity: 0.2;
+        }
+        .team-card h4 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        .team-card .team-role {
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        /* ========================================
+           CONTACT
+           ======================================== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: start;
+        }
+        .contact-info h3 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        .contact-info > p {
+            font-size: 15px;
+            color: var(--ink-faded);
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+        }
+        .contact-detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--parchment);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .contact-detail-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--ink-muted);
+        }
+        .contact-detail span {
+            font-size: 15px;
+            color: var(--ink-muted);
+        }
+        .contact-detail a {
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .contact-detail a:hover {
+            color: var(--gold);
+        }
+
+        .contact-socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .social-link {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--parchment);
+            border: 1px solid var(--parchment-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .social-link:hover {
+            background: var(--ink);
+            color: var(--gold-light);
+            border-color: var(--ink);
+        }
+        .social-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .contact-form {
+            background: var(--white);
+            border: 1px solid var(--parchment-mid);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-muted);
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--parchment-mid);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: 15px;
+            color: var(--ink);
+            background: var(--parchment);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--ink-faded);
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(200, 150, 90, 0.1);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--ink);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out-expo);
+        }
+        .form-submit:hover {
+            background: var(--ink-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            background: var(--ink);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 64px 0 32px;
+        }
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .footer-brand p {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-top: 16px;
+            max-width: 280px;
+        }
+        .footer-col h5 {
+            color: var(--white);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 20px;
+        }
+        .footer-col a {
+            display: block;
+            padding: 5px 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .footer-col a:hover {
+            color: var(--gold-light);
+        }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 28px;
+            font-size: 13px;
+        }
+        .footer-bottom a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer-aws {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .security-grid { grid-template-columns: repeat(3, 1fr); }
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-cta { display: none; }
+            .mobile-toggle { display: flex; }
+
+            .hero { padding: 100px 0 60px; }
+            .hero-shapes { display: none; }
+            .hero-stats { gap: 24px; }
+            .hero-stat-value { font-size: 24px; }
+
+            .section { padding: 72px 0; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; gap: 48px; }
+            .steps::before { display: none; }
+            .security-grid { grid-template-columns: 1fr 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-4px); }
+            .team-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
+            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+            .footer-top { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 36px; }
+            .hero-actions { flex-direction: column; }
+            .hero-actions .btn { width: 100%; justify-content: center; }
+            .hero-stats { flex-direction: column; gap: 16px; }
+            .security-grid { grid-template-columns: 1fr; }
+            .security-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== HEADER ========== -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <a href="#" class="logo">
+                <div class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 3v4a1 1 0 0 0 1 1h4"/>
+                        <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Sign<span>My</span>Doc</span>
+            </a>
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#security">Security</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <a href="#pricing" class="nav-cta">Get Started</a>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#features" onclick="closeMobile()">Features</a>
+        <a href="#how-it-works" onclick="closeMobile()">How It Works</a>
+        <a href="#security" onclick="closeMobile()">Security</a>
+        <a href="#pricing" onclick="closeMobile()">Pricing</a>
+        <a href="#about" onclick="closeMobile()">About</a>
+        <a href="#contact" onclick="closeMobile()">Contact</a>
+    </div>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-shapes">
+            <div class="hero-shape hero-shape-1"></div>
+            <div class="hero-shape hero-shape-2"></div>
+            <div class="hero-shape hero-shape-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge reveal">
+                    <span class="hero-badge-dot"></span>
+                    Now in public beta
+                </div>
+                <h1 class="reveal reveal-delay-1">
+                    Document signing,<br>
+                    <span class="signature-word">simplified.</span>
+                </h1>
+                <p class="reveal reveal-delay-2">
+                    Send, sign, and manage legally binding documents in seconds &mdash; not hours. Built for startups and growing businesses that move fast.
+                </p>
+                <div class="hero-actions reveal reveal-delay-3">
+                    <a href="#pricing" class="btn btn-primary">
+                        Get Started Free
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-secondary">
+                        See How It Works
+                    </a>
+                </div>
+                <div class="hero-stats reveal reveal-delay-4">
+                    <div>
+                        <div class="hero-stat-value">10k+</div>
+                        <div class="hero-stat-label">Documents signed</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-value">&lt; 2 min</div>
+                        <div class="hero-stat-label">Average signing time</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-value">99.9%</div>
+                        <div class="hero-stat-label">Uptime SLA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES ========== -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="features-header">
+                <div class="section-label reveal">Capabilities</div>
+                <h2 class="section-title reveal reveal-delay-1">Everything you need to<br>close deals faster</h2>
+                <p class="section-subtitle reveal reveal-delay-2">Powerful features designed to streamline your document workflows from first draft to final signature.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    </div>
+                    <h3>Send &amp; Sign Documents</h3>
+                    <p>Upload any PDF or document and send it for signature in seconds. Recipients sign from any device &mdash; no account required.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h3>Real-Time Tracking</h3>
+                    <p>Know exactly where every document stands. Get instant notifications when documents are viewed, signed, or completed.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <h3>Legally Binding e-Signatures</h3>
+                    <p>Every signature is fully compliant with the ESIGN Act, UETA, and eIDAS regulation. Audit trails included automatically.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+                    </div>
+                    <h3>Template Library</h3>
+                    <p>Save time with reusable templates for NDAs, contracts, offer letters, and more. Customize fields and share across your team.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-4">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Team Collaboration</h3>
+                    <p>Manage signers, assign roles, set permissions, and keep your entire team aligned with shared dashboards and workflows.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-5">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+                    </div>
+                    <h3>API &amp; Integrations</h3>
+                    <p>Connect SignMyDoc to your existing tools via our REST API, webhooks, Zapier, and native Slack and CRM integrations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="section" id="how-it-works">
+        <div class="container">
+            <div class="how-it-works-header">
+                <div class="section-label reveal">How It Works</div>
+                <h2 class="section-title reveal reveal-delay-1">Three steps to a<br>signed document</h2>
+                <p class="section-subtitle reveal reveal-delay-2">No complex setup. No learning curve. Just upload, send, and get signatures.</p>
+            </div>
+            <div class="steps">
+                <div class="step reveal">
+                    <div class="step-number">
+                        <span class="step-number-inner">1</span>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                    </div>
+                    <h3>Upload your document</h3>
+                    <p>Drag and drop any PDF, Word document, or use one of our ready-made templates to get started instantly.</p>
+                </div>
+                <div class="step reveal reveal-delay-1">
+                    <div class="step-number">
+                        <span class="step-number-inner">2</span>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                        </div>
+                    </div>
+                    <h3>Add signers &amp; fields</h3>
+                    <p>Place signature fields, dates, and text boxes exactly where you need them. Add signers by email in any order.</p>
+                </div>
+                <div class="step reveal reveal-delay-2">
+                    <div class="step-number">
+                        <span class="step-number-inner">3</span>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                    </div>
+                    <h3>Send &amp; track signatures</h3>
+                    <p>Hit send and track progress in real time. Get notified the moment all parties have signed. It's that simple.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECURITY ========== -->
+    <section class="section security" id="security">
+        <div class="container">
+            <div class="security-header">
+                <div class="section-label reveal">Trust &amp; Security</div>
+                <h2 class="section-title reveal reveal-delay-1">Enterprise-grade security,<br>startup-friendly pricing</h2>
+                <p class="section-subtitle reveal reveal-delay-2">Your documents deserve the highest level of protection. We built SignMyDoc on infrastructure you can trust.</p>
+            </div>
+            <div class="security-grid">
+                <div class="security-item reveal">
+                    <div class="security-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h4>256-bit AES Encryption</h4>
+                    <p>Bank-grade encryption for documents at rest and in transit</p>
+                </div>
+                <div class="security-item reveal reveal-delay-1">
+                    <div class="security-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h4>SOC 2 Type II</h4>
+                    <p>Compliance certification currently in progress</p>
+                </div>
+                <div class="security-item reveal reveal-delay-2">
+                    <div class="security-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m2 12 5.1 2.8"/><path d="M12 2v6.5"/><path d="m22 12-5.1 2.8"/><path d="m8 20.2 1.3-5.7"/><path d="m14.7 14.5 1.3 5.7"/></svg>
+                    </div>
+                    <h4>GDPR Compliant</h4>
+                    <p>Full compliance with EU data protection regulations</p>
+                </div>
+                <div class="security-item reveal reveal-delay-3">
+                    <div class="security-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                    </div>
+                    <h4>Hosted on AWS</h4>
+                    <p>Built on S3, Lambda, RDS, and CloudFront for global performance</p>
+                </div>
+                <div class="security-item reveal reveal-delay-4">
+                    <div class="security-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h4>99.9% Uptime SLA</h4>
+                    <p>Guaranteed availability with redundant infrastructure</p>
+                </div>
+            </div>
+            <div class="security-banner reveal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span>Every signature includes a <strong>tamper-evident audit trail</strong> with timestamps, IP addresses, and certificate of completion.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING ========== -->
+    <section class="section" id="pricing">
+        <div class="container">
+            <div class="pricing-header">
+                <div class="section-label reveal">Pricing</div>
+                <h2 class="section-title reveal reveal-delay-1">Simple, transparent pricing</h2>
+                <p class="section-subtitle reveal reveal-delay-2">Start free. Scale as you grow. No hidden fees, no surprises.</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Free -->
+                <div class="pricing-card reveal">
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-price">$0<span> /month</span></div>
+                    <div class="pricing-desc">Perfect for individuals and getting started.</div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            5 documents per month
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            1 user
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Basic templates
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Email notifications
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Audit trail
+                        </li>
+                    </ul>
+                    <a href="#" class="pricing-btn pricing-btn-outline">Start Free</a>
+                </div>
+                <!-- Pro -->
+                <div class="pricing-card featured reveal reveal-delay-1">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">$15<span> /month</span></div>
+                    <div class="pricing-desc">For growing teams that need more power.</div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Unlimited documents
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Up to 5 users
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            API access
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Custom branding
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Priority email support
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Advanced templates
+                        </li>
+                    </ul>
+                    <a href="#" class="pricing-btn pricing-btn-filled">Get Started</a>
+                </div>
+                <!-- Business -->
+                <div class="pricing-card reveal reveal-delay-2">
+                    <div class="pricing-name">Business</div>
+                    <div class="pricing-price">$49<span> /month</span></div>
+                    <div class="pricing-desc">For organizations that need full control.</div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Unlimited everything
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Unlimited users
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            SSO &amp; SAML
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Advanced audit trail
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Priority support
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Dedicated account manager
+                        </li>
+                    </ul>
+                    <a href="#" class="pricing-btn pricing-btn-outline">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ABOUT / TEAM ========== -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="about-header">
+                <div class="section-label reveal">About Us</div>
+                <h2 class="section-title reveal reveal-delay-1">Built by people who<br>sign documents too</h2>
+                <p class="section-subtitle reveal reveal-delay-2">Founded in 2025, SignMyDoc is on a mission to make document signing effortless for every business. We believe the way you handle documents should be as modern as the rest of your workflow.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="team-avatar">YP</div>
+                    <h4>Yash P.</h4>
+                    <div class="team-role">Founder &amp; CEO</div>
+                </div>
+                <div class="team-card reveal reveal-delay-1">
+                    <div class="team-avatar">AK</div>
+                    <h4>Alex K.</h4>
+                    <div class="team-role">CTO</div>
+                </div>
+                <div class="team-card reveal reveal-delay-2">
+                    <div class="team-avatar">SR</div>
+                    <h4>Sarah R.</h4>
+                    <div class="team-role">Head of Product</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info reveal">
+                    <div class="section-label">Get In Touch</div>
+                    <h3>Let's talk about your<br>document workflow</h3>
+                    <p>Have questions about SignMyDoc? Want a demo for your team? We'd love to hear from you.</p>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        </div>
+                        <span><a href="mailto:hello@signmydoc.com">hello@signmydoc.com</a></span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <span>Remote-first, globally distributed</span>
+                    </div>
+                    <div class="contact-socials">
+                        <a href="#" class="social-link" aria-label="Twitter / X">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form reveal reveal-delay-2" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="Jane Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="jane@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" placeholder="Tell us about your document workflow needs..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="#" class="logo" style="color: var(--white);">
+                        <div class="logo-mark">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
+                        </div>
+                        <span class="logo-text">Sign<span>My</span>Doc</span>
+                    </a>
+                    <p>Modern document signing for businesses that move fast. Secure, legally binding, and beautifully simple.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Product</h5>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#security">Security</a>
+                    <a href="#how-it-works">How It Works</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Blog</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Legal</h5>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                    <a href="#">DPA</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2025&ndash;2026 SignMyDoc. All rights reserved.</span>
+                <span class="footer-aws">Built with <span style="color: #E25555;">&hearts;</span> and <a href="#">AWS</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // Header scroll behavior
+        const header = document.getElementById('header');
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const st = window.scrollY;
+            header.classList.toggle('scrolled', st > 40);
+            lastScroll = st;
+        }, { passive: true });
+
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+        function closeMobile() {
+            mobileToggle.classList.remove('active');
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Scroll reveal with IntersectionObserver
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => revealObserver.observe(el));
+
+        // Contact form handler
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.form-submit');
+            const original = btn.textContent;
+            btn.textContent = 'Message Sent!';
+            btn.style.background = 'var(--emerald)';
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.style.background = '';
+                e.target.reset();
+            }, 2500);
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    const offset = 80;
+                    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
